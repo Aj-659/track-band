@@ -4,3 +4,4 @@ sqlalchemy
 pymysql
 pydantic
 typing-extensions
+python-dotenv
