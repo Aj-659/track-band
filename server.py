@@ -38,7 +38,32 @@ class UserCreateSchema(UserSchema):
     Password: str
     class Config:
         orm_mode = True
-    
+
+
+#for login functionality
+
+class LoginRequest(BaseModel):
+    Imei_no: int
+    Username: str
+    Password: str
+
+@app.post("/login")
+def login_user(request: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(
+        User.Imei_no == request.Imei_no,
+        User.Username == request.Username,
+        User.Password == request.Password
+    ).first()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username, password, or IMEI")
+
+    return {
+        "message": "Login successful",
+        "Username": user.Username,
+        "Imei_no": user.Imei_no
+    }
+
 
 @app.get("/user_cr", response_model=List[UserSchema])
 def get_users(db: Session = Depends(get_db)):
